@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>직출퇴 알림 구독 - inzisoft</title>
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <link rel="apple-touch-icon" href="/icon.png" />
+</head>
+<body>
+  <h1>직출퇴 알림 구독</h1>
+  <button onclick="subscribe()">Subscribe</button>
+
+  <script>
+    const vapidPublicKey = 'BFSA_8aQ8Ib7U4MSsWiMHrlXB5cfa8h2QBhSC_70yzydT3w6WGLQyzy1PmPg9LERgqwhkdYE-wwPaRkFWGI8eng'; // 서버에서 생성한 공개키
+    const serverUrl = window.location.origin;//'http://localhost:3000';
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(() => {
+        console.log('Service Worker registered');
+      });
+    }
+    async function subscribe() {
+      const registration = await navigator.serviceWorker.ready;
+
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+      });
+
+      const key = prompt("전송받을 키 입력 (예: user123)");
+
+      await fetch(`${serverUrl}/push/subscribe`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': '69420'
+        },
+        body: JSON.stringify({ key, subscription })
+      });
+
+      alert('구독 완료! 서버에서 /push/notify/' + key + ' 호출 시 푸시가 옵니다.');
+    }
+
+    function urlBase64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - base64String.length % 4) % 4);
+      const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+      const raw = atob(base64);
+      return new Uint8Array([...raw].map(c => c.charCodeAt(0)));
+    }
+  </script>
+</body>
+</html>
