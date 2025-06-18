@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: tbms-bot
+    ports:
+      - "3000:3000"  # 호스트:컨테이너
+    environment:
+      - NODE_ENV=production
+      - TBMS_PW=your_api_key_here
+    volumes:
+      - .:/app
+      - /app/node_modules  # node_modules는 컨테이너 내 유지
+    restart: unless-stopped
+    tty: true

@@ -25,32 +25,7 @@ pushRouter.get("/notify/:key", notify);
 
 pushRouter.get("/test/:goOff", async (req, res) => {
   try {
-    // var cnt = 0;
     var goOff = req.params.goOff;
-
-    // //구독자 목록
-    // const subscribers = await getSubscribers();
-    // if (subscribers === null) throw new Error("subscriber is null");
-    // console.log(`subscribers:${subscribers.length}`)
-
-    // //구독자중 금일 직출/직퇴가 있는 사람 목록
-    // const list = await getGoOffCnt(subscribers.join(","), goOff);
-    // if (list === null) throw new Error("list is null");
-    // console.log(`list:${list.length}`);
-
-    // subscribers.forEach(subscriber => {
-    //   list.forEach(work => {
-    //     if (subscriber == work.empNo) {
-    //       if (goOff === "go") {
-    //         sendMessage(subscriber, "직출 안내", `${work.empNo}: ${work.drtGoDtStr}`);
-    //       }
-    //       else if (goOff === "off") {
-    //         sendMessage(subscriber, "직퇴 안내", `${work.empNo}: ${ work.drtOffDtStr }`);
-    //       }
-    //       else{}
-    //     }
-    //   });
-    // });
     findAndSend(goOff);
 
     res.status(200).send("cnt");
