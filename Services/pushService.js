@@ -52,8 +52,17 @@ export async function subscribe(req, res) {
     }
   }
 
+  // key 중복 검사 및 새로운 key 생성
+  let finalKey = key;
+  let suffix = 0;
+  while (db.data.subscriptions.hasOwnProperty(finalKey)) {
+    const padded = String(suffix).padStart(3, "0");
+    finalKey = `${key}__${padded}`;
+    suffix++;
+  }
+
   // 새 구독 저장
-  db.data.subscriptions[key] = subscription;
+  db.data.subscriptions[finalKey] = subscription;
   await db.write();
 
   res.status(201).json({ message: "Subscribed successfully" });
@@ -95,63 +104,10 @@ export async function sendMessage(key, title, message) {
 
   try {
     await webpush.sendNotification(subscription, payload);
-    // res.send("Push sent");
     return;
   } catch (err) {
     console.error(err);
-    // res.status(500).send("Push failed");
     throw new Error("Push failed");
   }
 };
 
-
-
-
-
-
-
-// // import { db } from "../db.js";
-// import webpush from "web-push";
-
-// // VAPID 설정
-// webpush.setVapidDetails(
-//   "mailto:example@example.com",
-//   "BFSA_8aQ8Ib7U4MSsWiMHrlXB5cfa8h2QBhSC_70yzydT3w6WGLQyzy1PmPg9LERgqwhkdYE-wwPaRkFWGI8eng",
-//   "igqtORuSgacSjVtYX-5ClCyxkTVXGO3d3yoED3xR4sk"
-// );
-
-// export async function subscribeUser(key, subscription) {
-//   const { endpoint, keys } = subscription;
-//   if (!endpoint || !keys?.p256dh || !keys?.auth) {
-//     throw new Error("Invalid subscription data");
-//   }
-
-//   await db.read();
-//   db.data ||= { subscriptions: {} };
-
-//   // 중복 제거
-//   for (const [existingKey, existingSub] of Object.entries(db.data.subscriptions)) {
-//     if (
-//       existingSub.endpoint === endpoint &&
-//       existingSub.keys?.p256dh === keys.p256dh &&
-//       existingSub.keys?.auth === keys.auth
-//     ) {
-//       delete db.data.subscriptions[existingKey];
-//       console.log(`Duplicate subscription removed: ${existingKey}`);
-//     }
-//   }
-
-//   // 저장
-//   db.data.subscriptions[key] = subscription;
-//   await db.write();
-// }
-
-// export async function notifyUser(key) {
-//   await db.read();
-//   const subscription = db.data.subscriptions[key];
-
-//   if (!subscription) throw new Error("No subscription found");
-
-//   const payload = JSON.stringify({ title: "알림", body: `푸시 메시지 for ${key}` });
-//   await webpush.sendNotification(subscription, payload);
-// }
