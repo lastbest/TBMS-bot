@@ -7,13 +7,188 @@
   <link rel="manifest" href="/manifest.json" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <link rel="apple-touch-icon" href="/icon.png" />
+  <link rel="apple-touch-icon" href="./images/icon.png" />
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 1.5rem;
+      background-color: #f7f9fc;
+      color: #333;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .subscribe-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
+
+    button:hover {
+      background-color: #357ab7;
+    }
+
+    .info-text {
+      text-align: center;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .guide-section {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .toggle-header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      background-color: #eef4ff;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      transition: background-color 0.3s;
+    }
+
+    .toggle-header:hover {
+      background-color: #d8e9ff;
+    }
+
+    .toggle-icon {
+      margin-left: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    .guide-content {
+      display: none;
+      transition: max-height 0.3s ease;
+    }
+
+    .guide-content.open {
+      display: block;
+    }
+
+    .step {
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .step img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    .step:nth-child(2) img {
+      width: 90%;
+      max-width: 400px; /* 2번 이미지 확대 */
+    }
+
+    .step span {
+      display: block;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .usage-tip {
+      background-color: #fff4e5;
+      color: #a65f00;
+      border-left: 5px solid #ffa726;
+      padding: 0.75rem 1rem;
+      margin-top: 1.5rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+  </style>
 </head>
 <body>
   <h1>직출퇴 알림 구독</h1>
-  <button onclick="subscribe()">Subscribe</button>
-  <span> 09:30, 09:55에 직출 알림 푸시가 옵니다.</span>
-  <span> 17:00에 직퇴 알림 푸시가 옵니다.</span>
+
+  <div class="subscribe-box">
+    <button onclick="subscribe()">Subscribe</button>
+    <div class="info-text">
+      <p>⏰ 오전 09:30, 09:55에 <strong>직출</strong> 알림이 발송됩니다.</p>
+      <p>⏰ 오후 17:00에 <strong>직퇴</strong> 알림이 발송됩니다.</p>
+    </div>
+    <div class="usage-tip">
+      ⚠️사용법<br>
+      <strong>안드로이드:</strong> 푸시 알림을 사용하려면 <strong>Chrome</strong>, <strong>삼성 인터넷</strong>, <strong>엣지</strong>, <strong>파이어폭스</strong>로 열어주세요.
+      <br><strong>애플:</strong> 아래 설명을 참고하세요.
+    </div>
+    
+  </div>
+
+  <div class="guide-section">
+    <div class="toggle-header" onclick="toggleGuide()">
+      📌 사번 확인 방법
+      <span class="toggle-icon" id="toggleIcon">▼</span>
+    </div>
+
+    <div class="guide-content" id="guideContent">
+      <div class="step">
+        <img src="./images/guide-web-01.png" alt="1단계">
+        <span>TBMS에 로그인 후 우측 상단의 이름을 클릭합니다.</span>
+      </div>
+      <div class="step">
+        <img src="./images/guide-web-02.png" alt="2단계">
+        <span>드롭다운 메뉴에서 <strong>계정 정보</strong>를 클릭합니다.</span>
+      </div>
+      <div class="step">
+        <img src="./images/guide-web-03.png" alt="3단계">
+        <span>계정 정보 팝업에서 <strong>사번</strong>을 확인합니다.</span>
+      </div>
+    </div>
+
+    <div class="toggle-header" onclick="toggleGuide2()">
+      📌 아이폰(IOS 16.4이상) 사용방법
+      <span class="toggle-icon" id="toggleIcon2">▼</span>
+    </div>
+
+    <div class="guide-content" id="guideContent2">
+      <div class="step">
+        <img src="./images/guide-ios-01.png" alt="1단계" style="max-width: 50%">
+        <span><strong>safari</strong>로 페이지를 연 후에 <strong>공유 버튼</strong>을 클릭합니다.</span>
+      </div>
+      <div class="step">
+        <img src="./images/guide-ios-02.png" alt="2단계" style="max-width: 50%">
+        <span><strong>홈화면에 추가</strong>를 선택합니다..</span>
+      </div>
+      <div class="step">
+        <img src="./images/guide-ios-03.png" alt="3단계" style="max-width: 50%">
+        <span><strong>추가 버튼</strong>을 클릭합니다.</span>
+      </div>
+      <div class="step">
+        <img src="./images/guide-ios-04.png" alt="4단계" style="max-width: 50%">
+        <span>홈화면에 생긴 바로가기로 접속합니다.</span>
+      </div>
+    </div>
+  </div>
 
   <script>
     const vapidPublicKey = 'BFSA_8aQ8Ib7U4MSsWiMHrlXB5cfa8h2QBhSC_70yzydT3w6WGLQyzy1PmPg9LERgqwhkdYE-wwPaRkFWGI8eng'; // 서버에서 생성한 공개키
@@ -32,8 +207,8 @@
         applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
       });
 
-      const key = prompt("전송받을 키 입력 (예: user123)");
-
+      const key = prompt("사번을 입력하세요 (예: IZ240404)");
+      
       await fetch(`${serverUrl}/push/subscribe`, {
         method: 'POST',
         headers: { 
@@ -51,6 +226,19 @@
       const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
       const raw = atob(base64);
       return new Uint8Array([...raw].map(c => c.charCodeAt(0)));
+    }
+
+    function toggleGuide() {
+      const content = document.getElementById("guideContent");
+      const icon = document.getElementById("toggleIcon");
+      const isOpen = content.classList.toggle("open");
+      icon.textContent = isOpen ? "▲" : "▼";
+    }
+    function toggleGuide2() {
+      const content = document.getElementById("guideContent2");
+      const icon = document.getElementById("toggleIcon2");
+      const isOpen = content.classList.toggle("open");
+      icon.textContent = isOpen ? "▲" : "▼";
     }
   </script>
 </body>
