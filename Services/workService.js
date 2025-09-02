@@ -8,7 +8,7 @@ import { getToday } from "../utils/helper.js";
 
 const serverUrl = "https://tbms.mobileleader.com:8010";
 const loginPath = "/outsidework/mobile/login";
-const testPath = "/outsidework/list";
+const testPath = "/attendance/outsidework/list";
 
 const myId = "jwkim@inzisoft.com";
 

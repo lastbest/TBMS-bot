@@ -7,10 +7,6 @@ import FormData from "form-data";
 import { getToday } from "../utils/helper.js";
 import { fetchData, login, getGoOffCnt } from "../Services/workService.js";
 
-const serverUrl = "https://tbms.mobileleader.com:8010";
-const loginPath = "/outsidework/mobile/login";
-const testPath = "/outsidework/list";
-
 const empNoJWKIM = "IZ240404";
 
 // 쿠키 저장 jar 생성 및 axios wrapper
