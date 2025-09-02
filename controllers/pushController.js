@@ -7,8 +7,8 @@ import { notify, subscribe, getSubscribers, sendMessage } from "../Services/push
 
 import { Low } from "lowdb";
 import { JSONFile } from "lowdb/node";
-import { getGoOffCnt } from "../Services/workService.js";
-import { findAndSend } from "../Services/multiService.js";
+import { getGoOffCnt, login } from "../Services/workService.js";
+import { findAndSend, keyTrimTest } from "../Services/multiService.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -26,9 +26,11 @@ pushRouter.get("/notify/:key", notify);
 pushRouter.get("/test/:goOff", async (req, res) => {
   try {
     var goOff = req.params.goOff;
-    findAndSend(goOff);
+    // findAndSend(goOff);
+    await login();
+    keyTrimTest(goOff);
 
-    res.status(200).send("cnt");
+    res.status(200).send("test");
   } catch (err) {
     console.log(err);
     res.status(500).send("Failed to fetch data");
