@@ -131,7 +131,8 @@
   <h1>직출퇴 알림 구독</h1>
 
   <div class="subscribe-box">
-    <button onclick="subscribe()">Subscribe</button>
+    <button id="btn-subscribe" onclick="subscribe()" style="display: none;">Subscribe</button>
+    <button id="btn-unsubscribe" onclick="unsubscribe()" style="display: none;background-color:crimson">Subscribed</button>
     <div class="info-text">
       <p>⏰ 오전 09:30, 09:55에 <strong>직출</strong> 알림이 발송됩니다.</p>
       <p>⏰ 오후 17:00에 <strong>직퇴</strong> 알림이 발송됩니다.</p>
@@ -192,13 +193,28 @@
 
   <script>
     const vapidPublicKey = 'BFSA_8aQ8Ib7U4MSsWiMHrlXB5cfa8h2QBhSC_70yzydT3w6WGLQyzy1PmPg9LERgqwhkdYE-wwPaRkFWGI8eng'; // 서버에서 생성한 공개키
-    const serverUrl = window.location.origin;//'http://localhost:3000';
+    const serverUrl = window.location.origin;
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').then(() => {
         console.log('Service Worker registered');
       });
     }
+
+    navigator.serviceWorker.ready.then(registration => {
+      return registration.pushManager.getSubscription();
+    }).then(subscription => {
+      if (subscription) {
+        document.getElementById("btn-subscribe").style.display = "none";
+        document.getElementById("btn-unsubscribe").style.display = "inline-block";
+      } else {
+        document.getElementById("btn-subscribe").style.display = "inline-block";
+        document.getElementById("btn-unsubscribe").style.display = "none";
+      }
+    }).catch(err => {
+      console.error("구독 여부 확인 실패:", err);
+    });
+
     async function subscribe() {
       const registration = await navigator.serviceWorker.ready;
 
@@ -207,7 +223,7 @@
         applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
       });
 
-      const key = prompt("사번을 입력하세요 (예: IZ240404)");
+      const key = prompt("사번을 입력하세요 (예: IZ250101)");
       if (key === null) return;
       
       await fetch(`${serverUrl}/push/subscribe`, {
