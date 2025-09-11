@@ -132,7 +132,7 @@
 
   <div class="subscribe-box">
     <button id="btn-subscribe" onclick="subscribe()" style="display: none;">Subscribe</button>
-    <button id="btn-unsubscribe" onclick="unsubscribe()" style="display: none;background-color:crimson">Subscribed</button>
+    <button id="btn-unsubscribe" onclick="unSubscribe()" style="display: none;background-color:crimson">Subscribed</button>
     <div class="info-text">
       <p>⏰ 오전 09:30, 09:55에 <strong>직출</strong> 알림이 발송됩니다.</p>
       <p>⏰ 오후 17:00에 <strong>직퇴</strong> 알림이 발송됩니다.</p>
@@ -216,26 +216,52 @@
     });
 
     async function subscribe() {
-      const registration = await navigator.serviceWorker.ready;
+      const empNo = prompt("사번을 입력하세요 (예: IZ250101)");
+      if (empNo === null) return;
 
+      const registration = await navigator.serviceWorker.ready;
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
       });
 
-      const key = prompt("사번을 입력하세요 (예: IZ250101)");
-      if (key === null) return;
-      
       await fetch(`${serverUrl}/push/subscribe`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'ngrok-skip-browser-warning': '69420'
         },
-        body: JSON.stringify({ key, subscription })
+        body: JSON.stringify({ subscription, empNo })
       });
 
+      document.getElementById("btn-subscribe").style.display = "none";
+      document.getElementById("btn-unsubscribe").style.display = "inline-block";
       alert('구독 완료!');
+    }
+
+    async function unSubscribe() {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      if(!subscription) {alert("구독정보를 가져오는데 오류가 발생했습니다.");return;}
+
+      // const empNo = prompt("사번을 입력하세요 (예: IZ250101)");
+      if (!confirm("구독한 알림을 해제하시겠습니까?")) return;
+
+      const success = await subscription.unsubscribe();
+      if (!success) {alert("구독 해제 중 오류가 발생했습니다.");return;}
+      
+      await fetch(`${serverUrl}/push/unsubscribe`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': '69420'
+        },
+        body: JSON.stringify({ subscription })
+      });
+
+      document.getElementById("btn-subscribe").style.display = "inline-block";
+      document.getElementById("btn-unsubscribe").style.display = "none";
+      alert('구독 해제 완료!');
     }
 
     function urlBase64ToUint8Array(base64String) {
