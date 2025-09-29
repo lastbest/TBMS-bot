@@ -23,8 +23,26 @@ export async function login(req, res) {
     requestForm.append("userPw", process.env.TBMS_PW);
 
     const response = await client.post(serverUrl + loginPath, requestForm);
+    console.log(response.status + "\n" + response.data);
 
-    if (response?.data?.result === "fail") throw new Error(response?.data?.errMsg);
+    // 1. HTTP status code 체크
+    if (response.status !== 200) {
+      throw new Error(`Login failed, status code: ${response.status}`);
+    }
+
+    // 2. data 존재 여부 체크
+    if (!response.data) {
+      throw new Error("Login failed, response has no data");
+    }
+
+    /* 응답 html인 경우 */
+    if (response.headers["content-type"]?.startsWith("text/html")) {
+      throw new Error("Unexpected HTML response (maybe server error)");
+    }
+
+    if (response?.data?.result === "fail") {
+      throw new Error(response?.data?.errMsg || "Login failed");
+    }
 
     console.log("login complete");
     return true;
@@ -54,7 +72,7 @@ export async function fetchData(req, res) {
   }
 };
 
-export async function getGoOffCnt(empNoList, goOff) {
+export async function getGoOffCnt(empNoList, goOff, retry = 0) {
   try {
     const today = getToday();
     const requestForm = new FormData();
@@ -76,18 +94,21 @@ export async function getGoOffCnt(empNoList, goOff) {
 
     const response = await client.post(serverUrl + testPath, requestForm);
 
-    //todo: 로그인재시도 처리 필요
-    if (response.headers['content-type'].startsWith('text/html')) return null;
+    if (response.headers["content-type"]?.startsWith("text/html")) {
+      if (retry >= 4) {
+        // 안전장치: 4번만 재로그인 후 재시도
+        console.error("Retry failed, still got HTML response" + retry);
+        return null;
+      }
+      console.warn("Session expired, logging in again...");
+      const loggedIn = await login();
+      if (!loggedIn) return null;
+      return await getGoOffCnt(empNoList, goOff, retry + 1);
+    }
 
-    const list = response.data?.list;
-
-    // if (list === null) return null;
-    return list;
-    //return response.data?.list?.length || 0;
+    return response.data?.list ?? null;
   } catch (err) {
     console.error("Data fetch error:", err.message);
     return null;
   }
-
-  
 };
