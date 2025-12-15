@@ -17,7 +17,22 @@ cron.schedule("55 9 * * *", async () => {
   findAndSend("go");
 });
 
+//출장 12:00
+cron.schedule("0 12 * * *", async() => {
+  console.log("스케줄러 실행:", new Date().toLocaleString());
+  await login();
+  findAndSend("trip");
+});
+
+//퇴근 17:00
 cron.schedule("0 17 * * *", async() => {
+  console.log("스케줄러 실행:", new Date().toLocaleString());
+  await login();
+  findAndSend("off");
+});
+
+//퇴근 18:00
+cron.schedule("0 18 * * *", async() => {
   console.log("스케줄러 실행:", new Date().toLocaleString());
   await login();
   findAndSend("off");

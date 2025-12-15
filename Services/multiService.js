@@ -40,6 +40,15 @@ export async function findAndSend(goOff) {
                 `${work.empNm}님의 ${work.cmtTypeNm}건 퇴근 등록 안내드립니다.\n고객사명: ${work.cstmsNm}\n위치: ${work.place}`
               );
             }
+          } else if (goOff === "trip") {
+            if (!work.drtGoDtStr || !work.drtOffDtStr) {
+              console.log(`sendMessage: ${subscriber}: ${work}`);
+              sendMessage(
+                subscriber,
+                "직퇴 등록 안내",
+                `${work.empNm}님의 ${work.cmtTypeNm}건 출퇴근 등록 안내드립니다.\n고객사명: ${work.cstmsNm}\n위치: ${work.place}`
+              );
+            }
           }
         }
       });

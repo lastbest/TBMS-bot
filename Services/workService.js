@@ -85,10 +85,10 @@ export async function getGoOffCnt(empNoList, goOff, retry = 0) {
     if (goOff === "go") {
       requestForm.append("cmtTypeCdList", "DRT_GO");
       requestForm.append("cmtTypeCdList", "DRT_GO_OFF");
-      requestForm.append("cmtTypeCdList", "BIZ_TRIP");
     } else if (goOff === "off") {
       requestForm.append("cmtTypeCdList", "DRT_OFF");
       requestForm.append("cmtTypeCdList", "DRT_GO_OFF");
+    } else if (goOff === "trip") {
       requestForm.append("cmtTypeCdList", "BIZ_TRIP");
     }
 
